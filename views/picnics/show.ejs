@@ -1,0 +1,46 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picnic Show</title>
+</head>
+<body> -->
+    <% layout('layouts/boilerplate') %>
+
+    <div class="row">
+        <div class="col-6 offset-3">
+            <div class="card mb-3">
+                <img src="<%= picnic.image %>" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title"><%= picnic.title %></h5>
+                  <p class="card-text"><%= picnic.description %></p>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item text-muted"><%= picnic.location %></li>
+                </ul>
+                <div class="card-body">
+                    <a class="card-link btn btn-info" href="/picnics/<%=picnic._id%>/edit">Edit</a>
+                    <form class="d-inline" action="/picnics/<%=picnic._id%>?_method=DELETE" method=POST>
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+              </div>
+        </div>
+    </div>
+    <!-- <h1><%= picnic.title %></h1>
+    <h2><%= picnic.location %></h2>
+    <img src="<%= picnic.image %>" alt="">
+    <p><%= picnic.description %></p>
+        <p><a href="/picnics/<%=picnic._id%>/edit">Edit</a></p>
+        <p>
+            <form action="/picnics/<%=picnic._id%>?_method=DELETE" method=POST>
+                <button>Delete</button>
+            </form>
+        </p> -->
+    <!-- <footer>
+        <a href="/picnics">All Picnic Sites</a>
+    </footer> -->
+<!-- </body>
+</html> -->

@@ -1,0 +1,40 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Picnic Site</title>
+</head>
+<body> -->
+    <% layout('layouts/boilerplate') %>
+<!-- </body>
+</html> -->
+<div class="row">
+    <h1 class="text-center">Add A New Picnic Site</h1>
+    <div class="col-6 offset-3">
+        <form action="/picnics" method="POST">
+            <div class="mb-3">
+                <label class="form-label" for="title">Title</label>
+                <input class="form-control" type="text" name="picnic[title]" id="title">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="location">Location</label>
+                <input class="form-control" type="text" name="picnic[location]" id="location">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="image">Image URL</label>
+                <input class="form-control" type="text" name="picnic[image]" id="image">
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">Description</label>
+                <textarea class="form-control" type="text" name="picnic[description]" id="location"></textarea>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success">Add Picnic Site</button>
+            </div>
+        </form>
+        <a href="/picnics">Back to All Picnic Sites</a>
+    </div>
+</div>
+
