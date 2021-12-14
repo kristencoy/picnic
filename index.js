@@ -6,9 +6,12 @@ const methodOverride = require('method-override');
 const catchAsync = require('./utils/catchAsync');
 const Picnic = require('./models/picnic');
 const ExpressError = require('./utils/expresserror');
-const { picnicSchema } = require('./schemas.js');
+const Joi = require("joi");
+const { picnicSchema, reviewSchema } = require('./schemas.js');
 const { get } = require('http');
 const { urlencoded } = require('express');
+const Review = require('./models/review');
+const review = require('./models/review');
 
 mongoose.connect('mongodb://localhost:27017/picnicky', {
     useNewUrlParser: true,
@@ -32,6 +35,16 @@ app.use(methodOverride('_method'));
 
 const validatePicnic = (req, res, next) => {
     const { error } = picnicSchema.validate(req.body);
+    if(error){
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+}
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
     if(error){
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
@@ -74,7 +87,7 @@ app.post('/picnics', validatePicnic, catchAsync(async (req, res, next) => {
 }))
 
 app.get('/picnics/:id', catchAsync(async (req, res) => {
-    const picnic = await Picnic.findById(req.params.id)
+    const picnic = await Picnic.findById(req.params.id).populate('reviews');
     res.render('picnics/show', { picnic })
 }))
 
@@ -93,6 +106,15 @@ app.delete('/picnics/:id', catchAsync(async (req,res,next) => {
     const { id } = req.params;
     await Picnic.findByIdAndDelete(id);
     res.redirect('/picnics');
+}))
+
+app.post('/picnics/:id/reviews', validateReview, catchAsync(async(req,res) => {
+    const picnic = await Picnic.findById(req.params.id);
+    const review = new Review(req.body.review);
+    picnic.reviews.push(review);
+    await review.save();
+    await picnic.save();
+    res.redirect(`/picnics/${picnic._id}`);
 }))
 
 app.all('*', (req,res,next) => {
