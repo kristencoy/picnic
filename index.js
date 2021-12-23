@@ -2,16 +2,17 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const session = require('express-session');
+const flash = require('connect-flash');
 const methodOverride = require('method-override');
-const catchAsync = require('./utils/catchAsync');
-const Picnic = require('./models/picnic');
 const ExpressError = require('./utils/expresserror');
 const Joi = require("joi");
 const { picnicSchema, reviewSchema } = require('./schemas.js');
 const { get } = require('http');
 const { urlencoded } = require('express');
-const Review = require('./models/review');
-const review = require('./models/review');
+
+const picnics = require('./routes/picnics');
+const reviews = require('./routes/reviews');
 
 mongoose.connect('mongodb://localhost:27017/picnicky', {
     useNewUrlParser: true,
@@ -33,96 +34,33 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded ({ extended: true})); //parse body
 app.use(methodOverride('_method'));
 
-const validatePicnic = (req, res, next) => {
-    const { error } = picnicSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-}
+app.use(express.static(path.join(__dirname, 'public')))
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
+const sessionConfig = {
+    secret: 'thisshouldbeabettersecret',
+    resave: false,
+    saveUnitialized: true,
+    cookie: {
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
+app.use(session(sessionConfig))
+app.use(flash())
+
+app.use((req,res,next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+})
+
+app.use('/picnics', picnics)
+app.use('/picnics/:id/reviews', reviews)
 
 app.get('/', (req, res) => {
     res.render('home');
 })
-
-app.get('/picnics', catchAsync(async (req, res) => {
-    const picnics = await Picnic.find({});
-    res.render('picnics/index', { picnics })
-}))
-
-app.get('/picnics/new', (req, res) => {
-    res.render('picnics/new');
-})
-
-app.post('/picnics', validatePicnic, catchAsync(async (req, res, next) => {
-    // if(!req.body.picnic) throw new ExpressError('Invalid Picnic Data', 400);
-    const picnicSchema = Joi.object({
-        picnic: Joi.object({
-            title: Joi.string().required(),
-            location: Joi.string().required(),
-            description: Joi.string().required(),
-            image: Joi.string().required(),
-        }).required()
-    })
-    const { error } = picnicSchema.validate(req.body);
-    if(error){
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    }
-    const picnic = new Picnic(req.body.picnic);
-    await picnic.save();
-    res.redirect(`/picnics/${picnic._id}`);
-}))
-
-app.get('/picnics/:id', catchAsync(async (req, res) => {
-    const picnic = await Picnic.findById(req.params.id).populate('reviews');
-    res.render('picnics/show', { picnic })
-}))
-
-app.get('/picnics/:id/edit', catchAsync(async (req, res) => {
-    const picnic = await Picnic.findById(req.params.id)
-    res.render('picnics/edit', { picnic })
-}))
-
-app.put('/picnics/:id', validatePicnic, catchAsync(async (req,res) =>{
-    const { id } = req.params;
-    const picnic = await Picnic.findByIdAndUpdate(id, {...req.body.picnic})
-    res.redirect(`/picnics/${picnic._id}`);
-}))
-
-app.delete('/picnics/:id', catchAsync(async (req,res,next) => {
-    const { id } = req.params;
-    await Picnic.findByIdAndDelete(id);
-    res.redirect('/picnics');
-}))
-
-app.post('/picnics/:id/reviews', validateReview, catchAsync(async(req,res) => {
-    const picnic = await Picnic.findById(req.params.id);
-    const review = new Review(req.body.review);
-    picnic.reviews.push(review);
-    await review.save();
-    await picnic.save();
-    res.redirect(`/picnics/${picnic._id}`);
-}))
-
-app.delete('/picnics/:id/reviews/:reviewId', catchAsync(async (req,res) => {
-    const{ id, reviewId } = req.params;
-    await Picnic.findByIdAndUpdate(id, {$pull: {reviews: reviewId}});
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/picnics/${id}`);
-}))
 
 app.all('*', (req,res,next) => {
     next(new ExpressError('Page Not Found', 404));
