@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const { picnicSchema } = require('../schemas.js');
+const { isLoggedIn } = require('../middleware');
 
 const ExpressError = require('../utils/expresserror');
 const Picnic = require('../models/picnic');
@@ -21,7 +22,7 @@ router.get('/', catchAsync(async (req, res) => {
     res.render('picnics/index', { picnics })
 }))
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('picnics/new');
 })
 
@@ -55,19 +56,19 @@ router.get('/:id', catchAsync(async (req, res) => {
     res.render('picnics/show', { picnic })
 }))
 
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     const picnic = await Picnic.findById(req.params.id)
     res.render('picnics/edit', { picnic })
 }))
 
-router.put('/:id', validatePicnic, catchAsync(async (req,res) =>{
+router.put('/:id', isLoggedIn, validatePicnic, catchAsync(async (req,res) =>{
     const { id } = req.params;
     const picnic = await Picnic.findByIdAndUpdate(id, {...req.body.picnic})
     req.flash('success', 'Picnic site edited successfully.')
     res.redirect(`/picnics/${picnic._id}`);
 }))
 
-router.delete('/:id', catchAsync(async (req,res,next) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req,res,next) => {
     const { id } = req.params;
     await Picnic.findByIdAndDelete(id);
     res.redirect('/picnics');
