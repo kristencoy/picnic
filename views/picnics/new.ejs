@@ -13,7 +13,13 @@
 <div class="row">
   <h1 class="text-center">Add A New Picnic Site</h1>
   <div class="col-6 offset-3">
-    <form action="/picnics" method="POST" novalidate class="validated-form">
+    <form
+      action="/picnics"
+      method="POST"
+      novalidate
+      class="validated-form"
+      enctype="multipart/form-data"
+    >
       <div class="mb-3">
         <label class="form-label" for="title">Title</label>
         <input
@@ -34,7 +40,9 @@
           required
         />
       </div>
-      <div class="mb-3">
+
+      <!-- <input type="file" name="image" id="" multiple /> -->
+      <!-- <div class="mb-3">
         <label class="form-label" for="image">Image URL</label>
         <input
           class="form-control"
@@ -43,7 +51,7 @@
           id="image"
           required
         />
-      </div>
+      </div> -->
       <div class="mb-3">
         <label class="form-label" for="description">Description</label>
         <textarea
@@ -53,6 +61,12 @@
           id="location"
           required
         ></textarea>
+      </div>
+      <div class="mb-3 custom-file">
+        <label for="formFile" class="form-label custom-file-label"
+          >Upload an Image</label
+        >
+        <input class="form-control" type="file" id="formFile" multiple />
       </div>
       <div class="mb-3">
         <button class="btn btn-success">Add Picnic Site</button>

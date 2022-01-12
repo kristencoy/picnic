@@ -5,8 +5,9 @@ module.exports.picnicSchema = Joi.object({
         title: Joi.string().required(),
         location: Joi.string().required(),
         description: Joi.string().required(),
-        image: Joi.string().required(),
-    }).required()
+        // image: Joi.string().required(),
+    }).required(),
+    deleteImages: Joi.array()
 });
 
 module.exports.reviewSchema = Joi.object({

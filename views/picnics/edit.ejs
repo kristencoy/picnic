@@ -7,33 +7,85 @@
     <title>Edit Picnic Site</title>
 </head>
 <body> -->
-    <% layout('layouts/boilerplate') %>
-    <div class="row">
-        <h1 class="text-center">Edit Picnic Site</h1>
-        <div class="col-6 offset-3">
-            <form action="/picnics/<%=picnic._id%>?_method=PUT" method="POST" novalidate class="validated-form">
-                <div class="mb-3">
-                    <label class="form-label" for="title">Title</label>
-                    <input class="form-control" type="text" name="picnic[title]" id="title" value="<%= picnic.title %>" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="location">Location</label>
-                    <input class="form-control" type="text" name="picnic[location]" id="location" value="<%= picnic.location %>" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="image">Image URL</label>
-                    <input class="form-control" type="text" name="picnic[image]" id="image" value="<%= picnic.image %>" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="description">Description</label>
-                    <textarea class="form-control" type="text" name="picnic[description]" id="location" required><%= picnic.description %></textarea>
-                </div>
-                <div class="mb-3">
-                    <button class="btn btn-info">Update Picnic Site</button>
-                </div>
-            </form>
-            <a href="/picnics">Back to All Picnic Sites</a>
+<% layout('layouts/boilerplate') %>
+<div class="row">
+  <h1 class="text-center">Edit Picnic Site</h1>
+  <div class="col-6 offset-3">
+    <form
+      action="/picnics/<%=picnic._id%>?_method=PUT"
+      method="POST"
+      novalidate
+      class="validated-form"
+      enctype="multipart/form-data"
+    >
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input
+          class="form-control"
+          type="text"
+          name="picnic[title]"
+          id="title"
+          value="<%= picnic.title %>"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="location">Location</label>
+        <input
+          class="form-control"
+          type="text"
+          name="picnic[location]"
+          id="location"
+          value="<%= picnic.location %>"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <div class="form-file custom-file">
+          <input
+            class="form-file-input"
+            type="file"
+            id="image"
+            name="image"
+            multiple
+          />
+          <label for="formFile" class="form-label custom-file-label"
+            >Upload an Image</label
+          >
         </div>
-    </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="description">Description</label>
+        <textarea
+          class="form-control"
+          type="text"
+          name="picnic[description]"
+          id="location"
+          required
+        >
+<%= picnic.description %></textarea
+        >
+      </div>
+      <div class="mb-3">
+        <% picnic.images.forEach(function(img, i) { %>
+        <img src="<%= img.thumbnail %>" class="img-thumbnail" alt="" />
+        <div class="form-check-inline">
+          <input
+            type="checkbox"
+            id="image-<%=i%>"
+            name="deleteImages[]"
+            value="<%=img.filename%>"
+          />
+        </div>
+        <label for="image-<%=i%>">Delete?</label>
+        <% }) %>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-info">Update Picnic Site</button>
+      </div>
+    </form>
+    <a href="/picnics">Back to All Picnic Sites</a>
+  </div>
+</div>
 <!-- </body>
 </html> -->
