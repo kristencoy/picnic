@@ -11,11 +11,24 @@ ImageSchema.virtual('thumbnail').get(function() {
     return this.url.replace('/upload', '/upload/w_200');
 })
 
+const opts = { toJSON: { virtuals: true } };
+
 const PicnicSchema = new Schema({
     title: String,
     images: [ImageSchema],
-    location: String,
+    geometry: {
+        type: {
+          type: String,
+          enum: ['Point'],
+          required: true
+        },
+        coordinates: {
+          type: [Number],
+          required: true
+        }
+      },
     description: String,
+    location: String,
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -26,6 +39,10 @@ const PicnicSchema = new Schema({
             ref: 'Review'
         }
     ]
+}, opts);
+
+PicnicSchema.virtual('properties.popUpMarkup').get(function() {
+    return `<a href="/picnics/${this._id}">${this.title}</a>`;
 })
 
 PicnicSchema.post('findOneAndDelete', async function(doc) {
