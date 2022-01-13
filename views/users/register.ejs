@@ -1,29 +1,58 @@
 <% layout('layouts/boilerplate') %>
-<h1>Register</h1>
-<form action="/register" method="POST" class="validated-form" novalidate>
-  <div class="mb-3">
-    <label class="form-label" for="username">Username</label>
-    <input
-      class="form-control"
-      type="text"
-      name="username"
-      id="username"
-      required
-    />
+<div class="container justify-content-md-center align-items-center mt-5 mb-5">
+  <div class="row">
+    <div class="d-flex flex-column col-6 col-md-4 offset-4 height-">
+      <div class="card shadow">
+        <img
+          src="https://images.unsplash.com/photo-1506546163252-40ce32e4e290?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1160&q=80"
+          alt=""
+          class="card-img-top background-size-cover d-inline-block"
+        />
+        <div class="card-body">
+          <h5 class="card-title text-center">Register</h5>
+          <form
+            action="/register"
+            method="POST"
+            class="validated-form"
+            novalidate
+          >
+            <div class="mb-3">
+              <label class="form-label" for="username">Username</label>
+              <input
+                class="form-control"
+                type="text"
+                name="username"
+                id="username"
+                required
+                autofocus
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="email">Email</label>
+              <input
+                class="form-control"
+                type="email"
+                name="email"
+                id="email"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="password">Password</label>
+              <input
+                class="form-control"
+                type="password"
+                name="password"
+                id="password"
+                required
+              />
+            </div>
+            <div class="d-grid">
+              <button class="btn-success">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="mb-3">
-    <label class="form-label" for="email">Email</label>
-    <input class="form-control" type="email" name="email" id="email" required />
-  </div>
-  <div class="mb-3">
-    <label class="form-label" for="password">Password</label>
-    <input
-      class="form-control"
-      type="password"
-      name="password"
-      id="password"
-      required
-    />
-  </div>
-  <button class="btn-success">Register</button>
-</form>
+</div>
